@@ -1,10 +1,13 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const cors = require("cors");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 dotenv.config();
 const app = express();
 const port = process.env.PORT;
 const uri = process.env.MONGODB_URI;
+app.use(cors());
+app.use(express.json());
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -25,6 +28,12 @@ async function run() {
     app.get('/facilities', async(req, res) => {
         const result = await facilitiesCollection.find().toArray();
         res.json(result);
+    })
+    app.post('/facilities', async(req, res) => {
+        const newFacility = await req.body;
+        const result = await facilitiesCollection.insertOne(newFacility);
+        res.send(result);
+
     })
 
 
