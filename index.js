@@ -34,6 +34,35 @@ async function run() {
       const result = await facilitiesCollection.insertOne(newFacility);
       res.send(result);
     });
+    app.put("/facilities/:id", async(req, res) => {
+      const id = req.params.id;
+      const updatedFacility = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const updatedDoc = {
+        $set: {
+          facilityName: updatedFacility.facilityName,
+          facilityType: updatedFacility.facilityType,
+          imageUrl: updatedFacility.imageUrl,
+          location: updatedFacility.location,
+          pricePerHour: updatedFacility.pricePerHour,
+          capacity: updatedFacility.capacity,
+          availableTimeSlots: updatedFacility.availableTimeSlots,
+          description: updatedFacility.description,
+        },
+      };
+    const result = await facilitiesCollection.updateOne(
+    filter,
+    updatedDoc
+    );
+    res.send(result);
+    });
+        app.delete("/facilities/:id", async (req, res) => {
+      const { id } = req.params;
+      const result = await facilitiesCollection.deleteOne({
+        _id: new ObjectId(id),
+      });
+      res.json(result);
+    });
     app.get("/bookings", async (req, res) => {
       const result = await bookingsCollection.find().toArray();
       res.json(result);
@@ -46,9 +75,11 @@ async function run() {
 
     app.get("/bookings/:id", async (req, res) => {
       const { id } = req.params;
-      const result = await bookingsCollection.find({
-        _id: new ObjectId(id),
-      }).toArray();
+      const result = await bookingsCollection
+        .find({
+          _id: new ObjectId(id),
+        })
+        .toArray();
       res.send(result);
     });
 
