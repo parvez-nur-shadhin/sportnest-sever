@@ -29,6 +29,11 @@ async function run() {
       const result = await facilitiesCollection.find().toArray();
       res.json(result);
     });
+    app.get("/facilities/:id", async (req, res) => {
+      const id = req.params.id;
+      const result = await facilitiesCollection.findOne({_id: new ObjectId(id)});
+      res.json(result);
+    });
     app.post("/facilities", async (req, res) => {
       const newFacility = await req.body;
       const result = await facilitiesCollection.insertOne(newFacility);
